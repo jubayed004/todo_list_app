@@ -28,6 +28,14 @@ class HomeScreens extends StatefulWidget {
 }
 
 class _HomeScreensState extends State<HomeScreens> {
+
+ bool _isLiked= false;
+ void _toggelLike(){
+   setState(() {
+     _isLiked = !_isLiked;
+   });
+
+ }
 TextEditingController todoTextEditingController = TextEditingController();
 final GlobalKey<FormState> _formKey = GlobalKey();
 List<todo> todos =[];
@@ -48,25 +56,42 @@ List<todo> todos =[];
           }, icon: Icon(Icons.delete_sweep))
         ],
       ),
-      body: ListView.builder(
-        itemCount: todos.length,
-          itemBuilder: (context, index)=>ListTile(
-            onLongPress: (){
-              todos[index].isDone=!todos[index].isDone;
-              setState(() {
-              });
-            },
-            leading: todos[index].isDone?Icon(Icons.check_box_outline_blank):Icon(Icons.check_box),
-            title: Text(todos[index].title),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            GestureDetector(
+              onTap: _toggelLike,
+                child: Icon(
+                    _isLiked? Icons.favorite:Icons.favorite_border,
+                color: _isLiked?Colors.red:Colors.grey,
+                  size: 200,
+                ),
+            ),
+            ListView.builder(
+              shrinkWrap: true ,
+              primary: false,
+              itemCount: todos.length,
+                itemBuilder: (context, index)=>ListTile(
+                  onLongPress: (){
 
-            trailing: IconButton(onPressed: (){
-                todos.removeAt(index);
-                setState(() {
+                    setState(() {
+                      todos[index].isDone=!todos[index].isDone;
+                    });
+                  },
+                  leading: todos[index].isDone?Icon(Icons.check_box_outline_blank):Icon(Icons.check_box),
+                  title: Text(todos[index].title),
 
-                });
-            }, icon: Icon(Icons.delete)),
-          )
+                  trailing: IconButton(onPressed: (){
+                      todos.removeAt(index);
+                      setState(() {
 
+                      });
+                  }, icon: Icon(Icons.delete)),
+                )
+
+            ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -112,7 +137,9 @@ List<todo> todos =[];
                           todos.add(todo(todoTextEditingController.text.trim(), false));
                           if(_formKey.currentState!.validate()){
                             todoTextEditingController.clear();
+
                           }
+
                           setState(() {
 
                           });
